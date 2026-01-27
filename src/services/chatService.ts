@@ -6,7 +6,7 @@ import { ChatRequest, ChatResponse } from '@/types/chat';
 
 // Use Next.js API proxy instead of calling FastAPI directly
 // This allows server-side authentication handling
-const API_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+const API_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://sarimdev-todo-phase-iil-todo-ai-chatbot-hackathon.hf.space';
 
 class ChatService {
   async sendMessage(

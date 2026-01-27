@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth-server';
 import jwt from 'jsonwebtoken';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
+const BACKEND_URL = process.env.BACKEND_URL || 'https://sarimdev-todo-phase-iil-todo-ai-chatbot-hackathon.hf.space';
 const BETTER_AUTH_SECRET = process.env.BETTER_AUTH_SECRET || '';
 
 export async function POST(

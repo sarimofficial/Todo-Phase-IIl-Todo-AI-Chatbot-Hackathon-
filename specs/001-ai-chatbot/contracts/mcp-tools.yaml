@@ -1,0 +1,355 @@
+tools:
+  - name: add_task
+    description: Create a new task for the user
+    version: 1.0.0
+    parameters:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Task title (1-500 characters)
+          minLength: 1
+          maxLength: 500
+          example: "Buy groceries"
+        user_email:
+          type: string
+          description: User email from JWT token (for user isolation)
+          format: email
+          example: "user@example.com"
+      required:
+        - title
+        - user_email
+    returns:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Operation status
+        task_id:
+          type: string
+          description: Unique identifier of the created task (UUID)
+          example: "task_789xyz"
+        message:
+          type: string
+          description: Human-readable confirmation message
+          example: "Task 'Buy groceries' created"
+      required:
+        - status
+        - message
+    examples:
+      - input:
+          title: "Buy groceries"
+          user_email: "user@example.com"
+        output:
+          status: "success"
+          task_id: "task_789xyz"
+          message: "Task 'Buy groceries' created"
+      - input:
+          title: ""
+          user_email: "user@example.com"
+        output:
+          status: "error"
+          message: "Title cannot be empty"
+
+  - name: list_tasks
+    description: List all tasks for the user, optionally filtered by status
+    version: 1.0.0
+    parameters:
+      type: object
+      properties:
+        user_email:
+          type: string
+          description: User email from JWT token (for user isolation)
+          format: email
+          example: "user@example.com"
+        status:
+          type: string
+          description: Filter tasks by completion status
+          enum: [pending, completed, all]
+          default: all
+          example: "pending"
+      required:
+        - user_email
+    returns:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Operation status
+        tasks:
+          type: array
+          description: List of tasks matching the filter
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+                description: Task ID
+              title:
+                type: string
+                description: Task title
+              completed:
+                type: boolean
+                description: Completion status
+              created_at:
+                type: string
+                format: date-time
+                description: Creation timestamp
+        count:
+          type: integer
+          description: Number of tasks returned
+          example: 2
+      required:
+        - status
+        - tasks
+        - count
+    examples:
+      - input:
+          user_email: "user@example.com"
+          status: "pending"
+        output:
+          status: "success"
+          tasks:
+            - id: "task_789xyz"
+              title: "Buy groceries"
+              completed: false
+              created_at: "2026-01-25T10:30:00Z"
+            - id: "task_abc123"
+              title: "Call dentist"
+              completed: false
+              created_at: "2026-01-25T11:00:00Z"
+          count: 2
+      - input:
+          user_email: "user@example.com"
+          status: "all"
+        output:
+          status: "success"
+          tasks: []
+          count: 0
+
+  - name: complete_task
+    description: Mark a task as completed
+    version: 1.0.0
+    parameters:
+      type: object
+      properties:
+        task_id:
+          type: string
+          description: Unique identifier of the task to complete
+          example: "task_789xyz"
+        user_email:
+          type: string
+          description: User email from JWT token (for ownership validation)
+          format: email
+          example: "user@example.com"
+      required:
+        - task_id
+        - user_email
+    returns:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Operation status
+        message:
+          type: string
+          description: Human-readable confirmation or error message
+          example: "Task marked as complete"
+      required:
+        - status
+        - message
+    examples:
+      - input:
+          task_id: "task_789xyz"
+          user_email: "user@example.com"
+        output:
+          status: "success"
+          message: "Task marked as complete"
+      - input:
+          task_id: "task_nonexistent"
+          user_email: "user@example.com"
+        output:
+          status: "error"
+          message: "Task not found"
+      - input:
+          task_id: "task_other_user"
+          user_email: "user@example.com"
+        output:
+          status: "error"
+          message: "Task not found"
+
+  - name: update_task
+    description: Update a task's title
+    version: 1.0.0
+    parameters:
+      type: object
+      properties:
+        task_id:
+          type: string
+          description: Unique identifier of the task to update
+          example: "task_789xyz"
+        title:
+          type: string
+          description: New task title (1-500 characters)
+          minLength: 1
+          maxLength: 500
+          example: "Buy organic groceries"
+        user_email:
+          type: string
+          description: User email from JWT token (for ownership validation)
+          format: email
+          example: "user@example.com"
+      required:
+        - task_id
+        - title
+        - user_email
+    returns:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Operation status
+        message:
+          type: string
+          description: Human-readable confirmation or error message
+          example: "Task updated"
+      required:
+        - status
+        - message
+    examples:
+      - input:
+          task_id: "task_789xyz"
+          title: "Buy organic groceries"
+          user_email: "user@example.com"
+        output:
+          status: "success"
+          message: "Task updated"
+      - input:
+          task_id: "task_789xyz"
+          title: ""
+          user_email: "user@example.com"
+        output:
+          status: "error"
+          message: "Title cannot be empty"
+      - input:
+          task_id: "task_nonexistent"
+          title: "New title"
+          user_email: "user@example.com"
+        output:
+          status: "error"
+          message: "Task not found"
+
+  - name: delete_task
+    description: Delete a task permanently
+    version: 1.0.0
+    parameters:
+      type: object
+      properties:
+        task_id:
+          type: string
+          description: Unique identifier of the task to delete
+          example: "task_789xyz"
+        user_email:
+          type: string
+          description: User email from JWT token (for ownership validation)
+          format: email
+          example: "user@example.com"
+      required:
+        - task_id
+        - user_email
+    returns:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error]
+          description: Operation status
+        message:
+          type: string
+          description: Human-readable confirmation or error message
+          example: "Task deleted"
+      required:
+        - status
+        - message
+    examples:
+      - input:
+          task_id: "task_789xyz"
+          user_email: "user@example.com"
+        output:
+          status: "success"
+          message: "Task deleted"
+      - input:
+          task_id: "task_nonexistent"
+          user_email: "user@example.com"
+        output:
+          status: "error"
+          message: "Task not found"
+
+  - name: get_current_user
+    description: Get current user information from JWT token
+    version: 1.0.0
+    parameters:
+      type: object
+      properties:
+        user_email:
+          type: string
+          description: User email from JWT token
+          format: email
+          example: "user@example.com"
+      required:
+        - user_email
+    returns:
+      type: object
+      properties:
+        email:
+          type: string
+          description: User's email address
+          format: email
+          example: "user@example.com"
+        user_id:
+          type: string
+          description: User's unique identifier
+          example: "user_123abc"
+      required:
+        - email
+        - user_id
+    examples:
+      - input:
+          user_email: "user@example.com"
+        output:
+          email: "user@example.com"
+          user_id: "user_123abc"
+
+# Tool Execution Guidelines
+
+execution_guidelines:
+  - All tools MUST validate user_email parameter against JWT token
+  - All tools MUST filter database queries by user_email/user_id for multi-tenant isolation
+  - All tools MUST return consistent status field ("success" or "error")
+  - All tools MUST return human-readable message field
+  - All tools MUST handle errors gracefully and return error status (never throw exceptions to Cohere)
+  - Task IDs can be partial (minimum 8 characters) for user convenience
+  - All database operations MUST be asynchronous (async/await)
+
+security_requirements:
+  - User isolation: All queries MUST filter by user_email from JWT
+  - Ownership validation: Task operations MUST verify task belongs to user
+  - Input sanitization: All user inputs MUST be sanitized to prevent injection attacks
+  - Rate limiting: Tool execution subject to 60 requests/minute per user
+  - Logging: Log all tool invocations with user_id and parameters (exclude sensitive data)
+
+error_handling:
+  - Task not found: Return error status with "Task not found" message
+  - Invalid parameters: Return error status with specific validation error
+  - Database errors: Return error status with generic "Operation failed" message (log details server-side)
+  - Permission denied: Return error status with "Task not found" (don't reveal existence)
+
+performance_considerations:
+  - Use database indexes for efficient queries (user_id, task_id)
+  - Use connection pooling for database access
+  - Cache user information from JWT (avoid repeated lookups)
+  - Batch operations when possible (future optimization)

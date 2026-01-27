@@ -1,0 +1,277 @@
+/openapi: 3.0.0
+info:
+  title: AI Chatbot API
+  version: 1.0.0
+  description: API endpoint for conversational AI chatbot with task management capabilities
+
+servers:
+  - url: http://localhost:8000
+    description: Local development server
+  - url: https://api.yourdomain.com
+    description: Production server
+
+paths:
+  /api/{user_id}/chat:
+    post:
+      summary: Send message to AI chatbot
+      description: |
+        Send a message to the AI chatbot and receive a response. The chatbot can perform
+        task management operations through natural language and maintains conversation context.
+
+        Authentication is required via JWT token in the Authorization header.
+      operationId: sendChatMessage
+      tags:
+        - Chat
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: User ID from JWT token (must match authenticated user)
+          schema:
+            type: string
+            example: "user_123abc"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                conversation_id:
+                  type: string
+                  format: uuid
+                  description: Optional - resume existing conversation. If not provided, a new conversation is created.
+                  example: "550e8400-e29b-41d4-a716-446655440000"
+                message:
+                  type: string
+                  minLength: 1
+                  maxLength: 500
+                  description: User's message to the chatbot
+                  example: "Add task: Buy groceries"
+              required:
+                - message
+            examples:
+              newConversation:
+                summary: Start new conversation
+                value:
+                  message: "Add task: Buy groceries"
+              resumeConversation:
+                summary: Resume existing conversation
+                value:
+                  conversation_id: "550e8400-e29b-41d4-a716-446655440000"
+                  message: "Show my tasks"
+              multiStep:
+                summary: Multi-step operation
+                value:
+                  message: "Add 'Weekly meeting' and show my pending tasks"
+      responses:
+        '200':
+          description: Successful response from chatbot
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  conversation_id:
+                    type: string
+                    format: uuid
+                    description: Conversation ID (new or existing)
+                    example: "550e8400-e29b-41d4-a716-446655440000"
+                  response:
+                    type: string
+                    description: Chatbot's response message
+                    example: "I've added 'Buy groceries' to your tasks. ✓"
+                  tool_calls:
+                    type: array
+                    description: List of tool invocations made during processing (optional)
+                    items:
+                      type: object
+                      properties:
+                        tool:
+                          type: string
+                          description: Name of the tool invoked
+                          example: "add_task"
+                        params:
+                          type: object
+                          description: Parameters passed to the tool
+                          example:
+                            title: "Buy groceries"
+                            user_email: "user@example.com"
+                        result:
+                          type: object
+                          description: Result returned by the tool
+                          example:
+                            status: "success"
+                            task_id: "task_789xyz"
+                            message: "Task created"
+                required:
+                  - conversation_id
+                  - response
+              examples:
+                simpleResponse:
+                  summary: Simple task creation
+                  value:
+                    conversation_id: "550e8400-e29b-41d4-a716-446655440000"
+                    response: "I've added 'Buy groceries' to your tasks. ✓"
+                    tool_calls:
+                      - tool: "add_task"
+                        params:
+                          title: "Buy groceries"
+                          user_email: "user@example.com"
+                        result:
+                          status: "success"
+                          task_id: "task_789xyz"
+                          message: "Task created"
+                multiStepResponse:
+                  summary: Multi-step operation
+                  value:
+                    conversation_id: "550e8400-e29b-41d4-a716-446655440000"
+                    response: "I've added 'Weekly meeting' to your tasks. ✓\n\nHere are your pending tasks:\n1. Buy groceries\n2. Weekly meeting"
+                    tool_calls:
+                      - tool: "add_task"
+                        params:
+                          title: "Weekly meeting"
+                          user_email: "user@example.com"
+                        result:
+                          status: "success"
+                          task_id: "task_abc123"
+                      - tool: "list_tasks"
+                        params:
+                          user_email: "user@example.com"
+                          status: "pending"
+                        result:
+                          status: "success"
+                          tasks:
+                            - id: "task_789xyz"
+                              title: "Buy groceries"
+                              completed: false
+                            - id: "task_abc123"
+                              title: "Weekly meeting"
+                              completed: false
+                          count: 2
+        '400':
+          description: Bad request - invalid input
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Message cannot be empty"
+        '401':
+          description: Unauthorized - invalid or missing JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Invalid authentication token"
+        '403':
+          description: Forbidden - user_id in path doesn't match JWT token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "User ID mismatch"
+        '404':
+          description: Not found - conversation_id doesn't exist or doesn't belong to user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Conversation not found"
+        '429':
+          description: Too many requests - rate limit exceeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "Too many requests. Please wait a moment."
+                  retry_after:
+                    type: integer
+                    description: Seconds to wait before retrying
+                    example: 60
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: "I'm having trouble connecting. Please try again."
+      security:
+        - BearerAuth: []
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: JWT token obtained from Better Auth authentication
+
+  schemas:
+    ChatRequest:
+      type: object
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+        message:
+          type: string
+          minLength: 1
+          maxLength: 500
+      required:
+        - message
+
+    ChatResponse:
+      type: object
+      properties:
+        conversation_id:
+          type: string
+          format: uuid
+        response:
+          type: string
+        tool_calls:
+          type: array
+          items:
+            $ref: '#/components/schemas/ToolCall'
+      required:
+        - conversation_id
+        - response
+
+    ToolCall:
+      type: object
+      properties:
+        tool:
+          type: string
+        params:
+          type: object
+        result:
+          type: object
+      required:
+        - tool
+        - params
+        - result
+
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error

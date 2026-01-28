@@ -3,7 +3,7 @@
  * Uses Next.js API proxy routes for authentication
  */
 
-const API_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://todo-phase-i-il-todo-ai-chatbot-hac-nine.vercel.app';
+const API_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://sarimdev-todo-phase-iil-todo-ai-chatbot-hackathon.hf.space';
 
 class ApiError extends Error {
     constructor(public status: number, message: string) {

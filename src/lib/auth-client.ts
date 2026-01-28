@@ -6,13 +6,7 @@ import { createAuthClient } from "better-auth/react"
 const baseURL = process.env.NEXT_PUBLIC_BETTER_AUTH_URL || '/api/auth';
 
 export const authClient = createAuthClient({
-    baseURL,
-    // Ensure fetch includes cookies so the session cookie is sent with requests
-    // This field name depends on the library; if `fetchOptions` isn't supported,
-    // the library may still automatically send cookies for same-origin requests.
-    fetchOptions: {
-        credentials: 'include'
-    }
+    baseURL
 })
 
 export const { signIn, signUp, signOut, useSession } = authClient

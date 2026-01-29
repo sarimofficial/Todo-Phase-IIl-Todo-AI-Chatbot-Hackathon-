@@ -17,6 +17,7 @@ function initializeAuth() {
 
     try {
         // Environment variables are automatically loaded by Next.js from .env.local (dev) and Vercel (prod)
+        console.log('[auth-server] Initializing Better Auth...');
         console.log('[auth-server] DATABASE_URL:', process.env.DATABASE_URL ? 'Set (hidden)' : 'Not set');
         console.log('[auth-server] BETTER_AUTH_SECRET:', process.env.BETTER_AUTH_SECRET ? 'Set (hidden)' : 'Not set');
 
@@ -48,6 +49,7 @@ function initializeAuth() {
             throw new Error("BETTER_AUTH_SECRET is not configured. Please set it in your environment variables.");
         }
 
+        console.log('[auth-server] Creating Better Auth instance...');
         authInstance = betterAuth({
             database: postgresDialect,
             emailAndPassword: {
@@ -56,13 +58,18 @@ function initializeAuth() {
             },
             secret: secret,
             trustedOrigins: [
+                "http://localhost:3000",
+                "http://localhost:3001",
                 "https://todo-phase-i-il-todo-ai-chatbot-hac.vercel.app",
-                process.env.NEXT_PUBLIC_APP_URL || "https://todo-phase-i-il-todo-ai-chatbot-hac.vercel.app",
-            ].filter(Boolean),
+                "https://todo-phase-i-il-todo-ai-chatbot-hac-nine.vercel.app",
+                process.env.NEXT_PUBLIC_APP_URL,
+            ].filter(Boolean) as string[],
         });
 
+        console.log('[auth-server] Better Auth initialized successfully');
         return authInstance;
     } catch (error) {
+        console.error('[auth-server] Failed to initialize Better Auth:', error);
         initError = error instanceof Error ? error : new Error(String(error));
         throw initError;
     }

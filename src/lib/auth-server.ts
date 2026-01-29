@@ -35,6 +35,6 @@ export const auth = betterAuth({
     secret: process.env.BETTER_AUTH_SECRET || "fallback-secret-for-dev",
     trustedOrigins: [
         "https://todo-phase-i-il-todo-ai-chatbot-hac.vercel.app",
-        process.env.NEXT_PUBLIC_APP_URL || "https://sarimdev-todo-phase-iil-todo-ai-chatbot-hackathon.hf.space",
+        process.env.NEXT_PUBLIC_APP_URL || "https://todo-phase-i-il-todo-ai-chatbot-hac.vercel.app",
     ].filter(Boolean),
 });

@@ -39,8 +39,22 @@ export const GET = async (req: Request) => {
         const res = await handler.GET(req);
         return await attachCors(res, req);
     } catch (error) {
-        console.error("Better Auth GET Error:", error);
-        throw error;
+        console.error("[auth-route] Better Auth GET Error:", error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const corsHeaders = buildCorsHeaders(req);
+        return new Response(
+            JSON.stringify({ 
+                error: 'Authentication endpoint error', 
+                message: errorMessage 
+            }),
+            { 
+                status: 500, 
+                headers: {
+                    ...corsHeaders,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
     }
 };
 
@@ -49,8 +63,22 @@ export const POST = async (req: Request) => {
         const res = await handler.POST(req);
         return await attachCors(res, req);
     } catch (error) {
-        console.error("Better Auth POST Error:", error);
-        throw error;
+        console.error("[auth-route] Better Auth POST Error:", error);
+        const errorMessage = error instanceof Error ? error.message : String(error);
+        const corsHeaders = buildCorsHeaders(req);
+        return new Response(
+            JSON.stringify({ 
+                error: 'Authentication endpoint error', 
+                message: errorMessage 
+            }),
+            { 
+                status: 500, 
+                headers: {
+                    ...corsHeaders,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
     }
 };
 

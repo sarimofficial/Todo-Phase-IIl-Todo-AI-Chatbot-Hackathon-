@@ -39,12 +39,12 @@ export default function MessageBubble({ role, content, timestamp }: MessageBubbl
           className={`
             px-4 py-3 rounded-2xl max-h-[400px] overflow-y-auto scrollbar-premium
             ${isUser
-              ? 'bg-indigo-600 text-white rounded-br-sm'
-              : 'bg-slate-600 text-white rounded-bl-sm'
+              ? 'bg-indigo-600 text-white rounded-br-sm shadow-md shadow-indigo-500/20'
+              : 'bg-gray-100 dark:bg-slate-700 text-gray-800 dark:text-gray-100 rounded-bl-sm shadow-sm border border-gray-200 dark:border-slate-600'
             }
           `}
         >
-          <div className="prose prose-sm prose-invert max-w-none">
+          <div className={`prose prose-sm max-w-none ${isUser ? 'prose-invert' : 'dark:prose-invert'}`}>
             <ReactMarkdown
               components={{
                 // Customize markdown rendering

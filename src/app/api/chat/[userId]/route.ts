@@ -4,9 +4,10 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { auth } from '@/lib/auth-server';
+import { headers } from 'next/headers';
 import jwt from 'jsonwebtoken';
 
-const BACKEND_URL = process.env.BACKEND_URL || 'https://sarimdev-todo-phase-iil-todo-ai-chatbot-hackathon.hf.space';
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:8000';
 const BETTER_AUTH_SECRET = process.env.BETTER_AUTH_SECRET || '';
 
 export async function POST(
@@ -17,8 +18,10 @@ export async function POST(
     // Await params (required in Next.js 15)
     const { userId } = await params;
 
-    // Get session from Better Auth
-    const session = await auth.api.getSession({ headers: request.headers });
+    // Get session from Better Auth using next/headers for reliable cookie access
+    const session = await auth.api.getSession({
+      headers: await headers()
+    });
 
     if (!session?.user) {
       return NextResponse.json(

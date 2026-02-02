@@ -27,18 +27,25 @@ export default function ChatPanel({ isOpen, onClose, children, onHeaderWheel }: 
       {/* Chat panel */}
       <div
         className={`
-          fixed bottom-24 right-6 z-50
-          w-[420px] h-[650px]
+          fixed z-50 transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1)
+          
+          /* Desktop Styles */
+          bottom-24 right-6
+          w-[min(420px,calc(100vw-3rem))]
+          h-[min(650px,calc(100vh-8rem))]
           bg-white/80 dark:bg-slate-900/80
           backdrop-blur-2xl
           rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)]
           border border-white/40 dark:border-white/10
           flex flex-col
-          transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1)
+
+          /* Animation State */
           ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}
 
+          /* Mobile Styles */
           max-md:bottom-0 max-md:right-0 max-md:left-0 max-md:top-0
           max-md:w-full max-md:h-full max-md:rounded-none
+          max-md:border-0
         `}
       >
         {/* Header */}

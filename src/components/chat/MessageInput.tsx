@@ -67,14 +67,15 @@ export default function MessageInput({
           className="
             flex-1 resize-none
             px-4 py-3
-            bg-gray-100 dark:bg-gray-800
+            bg-gray-100 dark:bg-slate-800/80
             text-gray-900 dark:text-white
             placeholder-gray-500 dark:placeholder-gray-400
-            rounded-lg
-            border border-transparent
-            focus:outline-none focus:ring-2 focus:ring-emerald-500
+            rounded-2xl
+            border border-gray-200 dark:border-slate-700
+            focus:outline-none focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500
             disabled:opacity-50 disabled:cursor-not-allowed
             max-h-24
+            scrollbar-none
           "
           style={{
             height: 'auto',
@@ -94,11 +95,13 @@ export default function MessageInput({
           className="
             flex items-center justify-center
             w-12 h-12
-            bg-emerald-500 hover:bg-emerald-600
+            bg-indigo-600 hover:bg-indigo-700
             text-white
-            rounded-lg
-            transition-colors
-            disabled:opacity-50 disabled:cursor-not-allowed
+            rounded-xl
+            shadow-lg shadow-indigo-500/20
+            transition-all duration-200
+            hover:scale-105 active:scale-95
+            disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:shadow-none
           "
           aria-label="Send message"
         >

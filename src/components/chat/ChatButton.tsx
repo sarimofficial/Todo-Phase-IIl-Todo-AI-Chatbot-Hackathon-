@@ -13,7 +13,7 @@ export default function ChatButton({ onClick, unreadCount = 0 }: ChatButtonProps
   return (
     <button
       onClick={onClick}
-      className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-emerald-500 hover:bg-emerald-600 text-white rounded-full shadow-lg transition-all duration-300 animate-pulse-slow"
+      className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full shadow-lg hover:shadow-indigo-500/30 transition-all duration-300 hover:scale-110 active:scale-90 animate-pulse-slow"
       aria-label="Open chat assistant"
     >
       {/* Chat bubble icon */}

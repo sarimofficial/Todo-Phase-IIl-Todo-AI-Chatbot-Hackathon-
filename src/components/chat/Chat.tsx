@@ -70,10 +70,10 @@ function Chat({ userId }: ChatProps) {
           className="flex-1 overflow-y-auto px-4 py-4 space-y-2 scrollbar-premium"
         >
           {messages.length === 0 && !isLoading && (
-            <div className="flex flex-col items-center justify-start pt-8 min-h-[400px] text-center px-4">
-              <div className="bg-indigo-50 dark:bg-indigo-900/10 p-6 rounded-3xl mb-6">
-                <p className="text-3xl mb-4">🤖</p>
-                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            <div className="flex flex-col items-center justify-center flex-1 h-full min-h-0 text-center px-4 py-8 overflow-y-auto">
+              <div className="bg-indigo-50 dark:bg-indigo-900/10 p-5 rounded-3xl mb-6 shadow-sm">
+                <p className="text-3xl mb-3">🤖</p>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1">
                   AI Task Manager
                 </h3>
                 <p className="text-sm text-gray-500 dark:text-gray-400 max-w-[250px]">
@@ -81,8 +81,8 @@ function Chat({ userId }: ChatProps) {
                 </p>
               </div>
 
-              <div className="w-full space-y-2">
-                <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+              <div className="w-full max-w-xs space-y-2">
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">
                   Try saying
                 </p>
                 <div className="grid grid-cols-1 gap-2">
@@ -90,9 +90,9 @@ function Chat({ userId }: ChatProps) {
                     <button
                       key={i}
                       onClick={() => sendMessage(action.text)}
-                      className="text-left px-4 py-3 text-sm bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl hover:border-indigo-500 dark:hover:border-indigo-500 hover:shadow-md transition-all group"
+                      className="text-left px-4 py-2.5 text-sm bg-white dark:bg-gray-800/80 border border-gray-100 dark:border-gray-700/50 rounded-xl hover:border-indigo-500 dark:hover:border-indigo-500 hover:shadow-md transition-all group w-full"
                     >
-                      <span className="text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                      <span className="text-gray-700 dark:text-gray-300 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 font-medium">
                         {action.label}
                       </span>
                     </button>

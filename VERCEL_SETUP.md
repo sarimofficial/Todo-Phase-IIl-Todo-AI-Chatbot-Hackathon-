@@ -23,8 +23,8 @@ BETTER_AUTH_SECRET=this-is-a-secure-32-char-secret-key-123
 
 #### Backend API URL
 ```
-NEXT_PUBLIC_API_URL=https://sarimdev-todo-phase-iil-todo-ai-chatbot-hackathon.hf.space
-BACKEND_URL=https://sarimdev-todo-phase-iil-todo-ai-chatbot-hackathon.hf.space
+NEXT_PUBLIC_API_URL=https://sarimdev-fullchatbotbackend.hf.space
+BACKEND_URL=https://sarimdev-fullchatbotbackend.hf.space
 ```
 
 #### Auth URL (Optional - leave unset to use relative paths)

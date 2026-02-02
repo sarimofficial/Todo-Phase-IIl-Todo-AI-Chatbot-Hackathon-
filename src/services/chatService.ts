@@ -6,7 +6,8 @@ import { ChatRequest, ChatResponse } from '@/types/chat';
 
 // Use Next.js API proxy instead of calling FastAPI directly
 // This allows server-side authentication handling
-const API_BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+// Use empty string for relative URLs to work in both local and deployed environments
+const API_BASE_URL = '';
 
 class ChatService {
   async sendMessage(
@@ -20,7 +21,8 @@ class ChatService {
     };
 
     // Call Next.js API proxy which handles authentication server-side
-    const response = await fetch(`${API_BASE_URL}/api/chat/${userId}`, {
+    // Using relative URL so it works on both localhost and deployed environments
+    const response = await fetch(`/api/chat/${userId}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
